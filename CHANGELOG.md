@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Phase 1 — Market Data
+
+- US stock and ETF search, security info and daily price history from Tiingo, stored in Postgres.
+- Incremental, idempotent sync; full refresh after splits and dividends; invalid bars rejected.
+- Tiingo plan limits enforced from settings and recorded in `provider_usage`; stored data is served
+  when the provider fails or a limit is reached.
+- Watchlist API and app: Home lists the watchlist, Research searches, stock detail shows price,
+  change, chart with ranges, source and date; star adds or removes from the watchlist.
+- One error format for the API (`{"error": "<code>"}`), translated in the app.
+
 ### Web
 
 - The app also builds for the web (`make web`, `npm run build:web`); CI checks the web build.

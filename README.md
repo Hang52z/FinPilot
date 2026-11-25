@@ -2,7 +2,7 @@
 
 AI financial research app for iOS, Android and the web. Research only — it never places trades.
 
-Status: **Phase 0 — Project Foundation**. See [PLAN.md](PLAN.md) for the roadmap.
+Status: **Phase 1 — Market Data**. See [PLAN.md](PLAN.md) for the roadmap.
 
 ## Requirements
 
@@ -15,7 +15,8 @@ Status: **Phase 0 — Project Foundation**. See [PLAN.md](PLAN.md) for the roadm
 make up
 ```
 
-Postgres and the API start at `http://localhost:8000` with migrations applied. Check it:
+Postgres and the API start at `http://localhost:8000` with migrations applied. For market data,
+put your Tiingo key in `.env` as `TIINGO_API_KEY` (copy `.env.example`). Check it:
 
 ```bash
 curl http://localhost:8000/api/v1/health

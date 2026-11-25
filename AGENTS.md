@@ -9,7 +9,7 @@ Rules and facts for coding agents. Keep this file in sync with the code.
 3. [docs/architecture.md](docs/architecture.md) and [docs/api.md](docs/api.md).
 4. [docs/decisions/](docs/decisions/) — why things are the way they are.
 
-**Current phase: 0 — Project Foundation (complete).** Do not start work from a later phase unless asked.
+**Current phase: 1 — Market Data (complete).** Do not start work from a later phase unless asked.
 
 ## Principles
 
@@ -48,6 +48,13 @@ Add mobile packages with `npx expo install <pkg>` so versions match the Expo SDK
 | `core/config.py` | `Settings` from environment variables. The only place config is read. |
 | `core/db.py` | `Base` for ORM models, `get_engine()`, `get_db()` session dependency. |
 | `core/health.py` | `GET /api/v1/health`. |
+| `core/errors.py` | `AppError` and the `{"error": "<code>"}` response contract. |
+| `market/provider.py` | `MarketDataProvider` protocol, data classes, market error codes, symbol rules. |
+| `market/tiingo.py` | Tiingo implementation (the only file that knows Tiingo's API). |
+| `market/quota.py` | `UsageGuard`: plan limits checked and recorded in `provider_usage`. |
+| `market/sync.py` | Incremental, idempotent price sync; split/dividend full refresh; bar validation. |
+| `market/service.py` | Use cases: search, stock, history, watchlist; freshness rule; stored-data fallback. |
+| `market/router.py` | `/market/*` and `/watchlist` routes; dependencies `get_provider`, `get_clock`. |
 
 New business modules go in `backend/app/<module>/` (e.g. `market/`) with their own router,
 models, schemas and service. No circular imports between modules. All financial math lives in the backend.
@@ -56,10 +63,12 @@ models, schemas and service. No circular imports between modules. All financial 
 
 | Path | Responsibility |
 |---|---|
-| `app/` | Routes only (Expo Router). `(tabs)/` holds the four tabs; `settings.tsx` is a modal. |
+| `app/` | Routes only (Expo Router). `(tabs)/` holds the four tabs; `stock/[symbol].tsx` is the detail; `settings.tsx` is a modal. |
 | `components/` | Shared UI. `Screen` is the base container for every screen. |
 | `hooks/` | TanStack Query hooks, one per server resource. |
-| `services/api.ts` | The only place that calls `fetch`. Base URL from `EXPO_PUBLIC_API_URL`. |
+| `services/api.ts` | The only place that calls `fetch`. `ApiError.code` carries the backend error code. |
+| `services/market.ts` | Market and watchlist endpoints and their types. |
+| `features/market/` | Pure logic: formatting, error-code → message, chart path math. |
 | `theme/` | Design tokens and `useTheme()`. Never hard-code colors, spacing or radius. |
 | `i18n/` | `en.ts` (source of truth, default) and `zh.ts`. Every UI string uses `t()`. |
 | `public/` | Copied as-is into the web build (`_headers` for Cloudflare Pages). |
@@ -72,7 +81,10 @@ models, schemas and service. No circular imports between modules. All financial 
 - **API errors**: return stable machine codes, never user-facing prose. The client localizes.
 - **Database**: one Alembic migration per change; must upgrade and downgrade cleanly. UTC everywhere,
   exact numeric types for money. Tables are created only by the phase that needs them.
-- **Tests**: every change adds or updates tests. Never delete or skip a test to get green.
+- **Market data**: never call a provider from a route; go through `MarketService`. Show every price
+  with its date and source; daily closes are never "real-time". Compute changes from adjusted prices.
+- **Tests**: backend tests use the real test database and `FakeProvider` (`tests/conftest.py`);
+  app tests mock `fetch` with `test-utils/mockApi.ts`. Every change adds or updates tests. Never delete or skip a test to get green.
 
 ## Completion report
 

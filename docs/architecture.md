@@ -12,11 +12,19 @@ FastAPI  /api/v1   (finpilotapi.<domain>)
 PostgreSQL 16
 ```
 
+## Modules
+
+| Module | Responsibility |
+|---|---|
+| `core` | Config, database session, error contract, health |
+| `market` | Securities, daily prices, provider access, plan limits, watchlist |
+
 ## Boundaries
 
 - The app talks only to the API. It never reaches the database or holds server secrets.
 - Configuration is read once, in `backend/app/core/config.py`, from environment variables.
 - Schema changes go through Alembic migrations in `backend/migrations/versions/`.
+- External data comes only through a provider interface (`market/provider.py`); see `docs/data-sources.md`.
 - Backend modules are added per phase under `backend/app/<module>/`; `core/` holds shared infrastructure only.
 
 ## Environments

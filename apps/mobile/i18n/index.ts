@@ -13,6 +13,13 @@ export const languages = [
 
 export type Language = (typeof languages)[number]['code'];
 
+type Leaves<T, P extends string = ''> = {
+  [K in keyof T & string]: T[K] extends string ? `${P}${K}` : Leaves<T[K], `${P}${K}.`>;
+}[keyof T & string];
+
+/** Every valid `t()` key, e.g. `'tabs.home'`. */
+export type TranslationKey = Leaves<typeof en>;
+
 const STORAGE_KEY = 'language';
 const DEFAULT_LANGUAGE: Language = 'en';
 

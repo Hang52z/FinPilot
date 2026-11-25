@@ -5,15 +5,20 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { restoreLanguage } from '@/i18n'; // also initializes i18next
+import { ApiError } from '@/services/api';
 import { useTheme } from '@/theme';
+
+/** Retry once for network and server errors; a 4xx answer will not change on retry. */
+function retry(failures: number, error: Error) {
+  const clientError = error instanceof ApiError && error.status >= 400 && error.status < 500;
+  return !clientError && failures < 1;
+}
 
 // Deep links to a modal (e.g. /settings) open with the tabs underneath.
 export const unstable_settings = { anchor: '(tabs)' };
 
 export default function RootLayout() {
-  const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: 1 } } }),
-  );
+  const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { retry } } }));
   const { t } = useTranslation();
   const { scheme, colors } = useTheme();
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
@@ -40,6 +45,7 @@ export default function RootLayout() {
         <StatusBar style="auto" />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="stock/[symbol]" options={{ headerShadowVisible: false }} />
           <Stack.Screen
             name="settings"
             options={{ title: t('settings.title'), presentation: 'modal' }}

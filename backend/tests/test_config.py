@@ -22,6 +22,16 @@ def test_settings_read_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.cors_origins == ["https://example.com"]
 
 
+def test_blank_api_key_means_not_configured(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TIINGO_API_KEY", "")
+    assert Settings(_env_file=None).tiingo_api_key is None
+
+    monkeypatch.setenv("TIINGO_API_KEY", "abc")
+    key = Settings(_env_file=None).tiingo_api_key
+    assert key is not None and key.get_secret_value() == "abc"
+    assert "abc" not in repr(key)
+
+
 def test_settings_reject_unknown_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ENV", "staging")
 

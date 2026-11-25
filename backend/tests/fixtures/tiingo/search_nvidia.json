@@ -1,0 +1,56 @@
+[
+ {
+  "name": "NVIDIA Corp",
+  "ticker": "ZNVD",
+  "permaTicker": "CA000000142062",
+  "openFIGIComposite": null,
+  "assetType": "Stock",
+  "isActive": true,
+  "countryCode": "CA"
+ },
+ {
+  "name": "NVIDIA Corp",
+  "ticker": "NVDA",
+  "permaTicker": "CA000000139516",
+  "openFIGIComposite": null,
+  "assetType": "Stock",
+  "isActive": true,
+  "countryCode": "CA"
+ },
+ {
+  "name": "NVIDIA Corp",
+  "ticker": "NVDA",
+  "permaTicker": "US000000000079",
+  "openFIGIComposite": "BBG000BBJQV0",
+  "assetType": "Stock",
+  "isActive": true,
+  "countryCode": "US"
+ },
+ {
+  "name": "Ninepoint NVIDIA HighShares ETF",
+  "ticker": "NVHI",
+  "permaTicker": "CA000000139523",
+  "openFIGIComposite": null,
+  "assetType": "ETF",
+  "isActive": true,
+  "countryCode": "CA"
+ },
+ {
+  "name": "NVIDIA (NVDA) Yield Shares Purpose ETF",
+  "ticker": "YNVD",
+  "permaTicker": "CA000000141709",
+  "openFIGIComposite": null,
+  "assetType": "ETF",
+  "isActive": true,
+  "countryCode": "CA"
+ },
+ {
+  "name": "T-REX 2X LONG NVIDIA DAILY TARGET ETF ",
+  "ticker": "NVDX",
+  "permaTicker": "US000000112330",
+  "openFIGIComposite": "BBG01JQGXGX5",
+  "assetType": "ETF",
+  "isActive": true,
+  "countryCode": "US"
+ }
+]
