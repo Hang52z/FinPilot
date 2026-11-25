@@ -1,0 +1,43 @@
+# Isolated test stack: `docker compose -f docker-compose.test.yml run --rm backend`
+# Own project name and a throwaway database, so it never touches development data.
+name: finpilot-test
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: finpilot
+      POSTGRES_PASSWORD: finpilot
+      POSTGRES_DB: finpilot_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finpilot -d finpilot_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    image: finpilot-backend:dev
+    environment:
+      ENV: test
+      DATABASE_URL: postgresql+psycopg://finpilot:finpilot@db:5432/finpilot_test
+    command: ["./scripts/check.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  mobile:
+    image: node:22-slim
+    working_dir: /app
+    volumes:
+      - ./apps/mobile:/app
+      - /app/node_modules
+    environment:
+      CI: "1"
+      EXPO_OFFLINE: "1"
+    command: ["sh", "-c", "npm ci --no-audit --no-fund && npm run check"]
+    profiles: ["mobile"]

@@ -1,0 +1,39 @@
+# Local development: `docker compose up --build`
+name: finpilot
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-finpilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finpilot}
+      POSTGRES_DB: ${POSTGRES_DB:-finpilot}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    image: finpilot-backend:dev
+    environment:
+      ENV: ${ENV:-development}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-finpilot}:${POSTGRES_PASSWORD:-finpilot}@db:5432/${POSTGRES_DB:-finpilot}
+      CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
