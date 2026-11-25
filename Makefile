@@ -17,11 +17,14 @@ check-backend: ## Lint, types, migrations and tests for the backend
 	$(TEST) build backend
 	$(TEST) run --rm backend; status=$$?; $(TEST) down -v; exit $$status
 
-check-mobile: ## Lint, types and tests for the mobile app
+check-mobile: ## Lint, types, tests and web build for the app
 	$(TEST) --profile mobile run --rm mobile
 
 migration: ## Create a migration: make migration m="add securities"
 	docker compose run --rm backend alembic revision --autogenerate -m "$(m)"
 
-mobile: ## Start the Expo dev server (runs on the host)
+mobile: ## Start the Expo dev server for iOS and Android (runs on the host)
 	cd apps/mobile && npm install && npx expo start
+
+web: ## Start the web app at http://localhost:8081 (runs on the host)
+	cd apps/mobile && npm install && npx expo start --web

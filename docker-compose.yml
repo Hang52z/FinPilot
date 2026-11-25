@@ -26,7 +26,7 @@ services:
     environment:
       ENV: ${ENV:-development}
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-finpilot}:${POSTGRES_PASSWORD:-finpilot}@db:5432/${POSTGRES_DB:-finpilot}
-      CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:8081"]}
     ports:
       - "8000:8000"
     volumes:

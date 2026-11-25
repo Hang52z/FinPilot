@@ -27,10 +27,15 @@ Rules and facts for coding agents. Keep this file in sync with the code.
 | Start db + API | `make up` |
 | All CI checks | `make check` |
 | Backend checks | `make check-backend` (ruff, mypy, migration round-trip, pytest) |
-| Mobile checks | `make check-mobile` (eslint, prettier, tsc, jest) |
+| App checks | `make check-mobile` (eslint, prettier, tsc, jest, web build) |
+| Web app | `make web` |
 | New migration | `make migration m="..."` |
 
-Mobile can also run on the host: `cd apps/mobile && npm run check`.
+The app can also be checked on the host: `cd apps/mobile && npm run check`.
+`make web` serves the web app at `http://localhost:8081`; the dev API already allows that origin.
+
+`apps/mobile` is one codebase for iOS, Android and web. Every change must work on all three;
+use `Platform.OS` only for a real platform difference, never to hide a bug.
 Add mobile packages with `npx expo install <pkg>` so versions match the Expo SDK.
 
 ## Module map
@@ -47,7 +52,7 @@ Add mobile packages with `npx expo install <pkg>` so versions match the Expo SDK
 New business modules go in `backend/app/<module>/` (e.g. `market/`) with their own router,
 models, schemas and service. No circular imports between modules. All financial math lives in the backend.
 
-### Mobile (`apps/mobile/`)
+### App (`apps/mobile/`, iOS + Android + web)
 
 | Path | Responsibility |
 |---|---|
@@ -57,6 +62,7 @@ models, schemas and service. No circular imports between modules. All financial 
 | `services/api.ts` | The only place that calls `fetch`. Base URL from `EXPO_PUBLIC_API_URL`. |
 | `theme/` | Design tokens and `useTheme()`. Never hard-code colors, spacing or radius. |
 | `i18n/` | `en.ts` (source of truth, default) and `zh.ts`. Every UI string uses `t()`. |
+| `public/` | Copied as-is into the web build (`_headers` for Cloudflare Pages). |
 
 ## Conventions
 

@@ -21,7 +21,9 @@
       "package": "com.finpilot.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "FinPilot",
+      "output": "single"
     },
     "plugins": ["expo-router", "expo-font", "expo-asset"],
     "scheme": "finpilot",

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from 'i18next';
+import { Platform } from 'react-native';
 import { initReactI18next } from 'react-i18next';
 
 import en from './en';
@@ -25,6 +26,13 @@ void i18n.use(initReactI18next).init({
   fallbackLng: DEFAULT_LANGUAGE,
   interpolation: { escapeValue: false },
 });
+
+// On web, keep <html lang> in step so screen readers and fonts use the right language.
+if (Platform.OS === 'web') {
+  i18n.on('languageChanged', (language) => {
+    document.documentElement.lang = language === 'zh' ? 'zh-Hans' : language;
+  });
+}
 
 /** Restores the saved language. Falls back to English if storage is empty or unreadable. */
 export async function restoreLanguage(): Promise<void> {
